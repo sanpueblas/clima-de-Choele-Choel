@@ -1,0 +1,6 @@
+{
+  "name": "Clima FT0300",
+  "description": "Dashboard meteorológico con datos de la estación FT0300 vía Weathercloud.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
