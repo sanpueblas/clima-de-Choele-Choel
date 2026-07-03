@@ -1,0 +1,57 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Permite correrlo manualmente con un botón
+
+jobs:
+  build:
+    name: Compilar APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Construir aplicación web
+        run: npm run build
+
+      - name: Agregar plataforma Android
+        run: |
+          npx cap add android
+          npx cap sync android
+
+      - name: Configurar Java (necesario para Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Dar permisos de ejecución a Gradle
+        run: chmod +x android/gradlew
+
+      - name: Compilar APK de Android
+        working-directory: ./android
+        run: ./gradlew assembleDebug
+
+      - name: Subir APK final para descargar
+        uses: actions/upload-artifact@v4
+        with:
+          name: clima-choele-choel-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Subir proyecto para Android Studio
+        uses: actions/upload-artifact@v4
+        with:
+          name: proyecto-android-studio
+          path: android/
